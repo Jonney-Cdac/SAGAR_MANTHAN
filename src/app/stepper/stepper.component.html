@@ -1,0 +1,347 @@
+<button mat-raised-button (click)="!isLinear =  isLinear" id="toggle-linear" hidden>
+  {{isLinear ? 'Click to Register' : 'Registration form.'}}
+</button>
+<div class="container card" style="margin-top: 2%;">
+  <mat-stepper [linear]="!isLinear" #stepper>
+    <mat-step [stepControl]="firstFormGroup">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Fill your Personal Details</ng-template>
+        <div class="container col-md-10">
+          <div class="container-fluid col-md-12" style="display: flex;">
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Firstname</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Firstname</mat-label>
+                  <input matInput placeholder="First name" formControlName="firstName" required>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Middlename</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill" style="margin: auto">
+                  <mat-label>Middlename</mat-label>
+                  <input matInput placeholder="Middle name" formControlName="middleName" required>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Lastname</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill" style="margin: auto">
+                  <mat-label>Lastname</mat-label>
+                  <input matInput placeholder="Last Name" formControlName="lastName" required>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="container-fluid col-md-12" style="display: flex;">
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Profession</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Profession</mat-label>
+                  <input matInput placeholder="Profession" formControlName="profession" required>
+                </mat-form-field>
+              </div>
+  
+  
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Education</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Education</mat-label>
+                  <input matInput placeholder="Education" formControlName="education" required>
+                </mat-form-field>
+              </div>
+  
+  
+            </div>
+            <!-- <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Address</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Address</mat-label>
+                  <input matInput placeholder="Ex: House,City,State-Pincode." formControlName="firstCtrl" required>
+                </mat-form-field>
+              </div>
+            </div> -->
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Gender</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Select</mat-label>
+                  <mat-select  formControlName="gender">
+                    <mat-option value="male">Male</mat-option>
+                    <mat-option value="female">Female</mat-option>
+                    <mat-option value="others">Others</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+  
+          </div>
+        </div>
+  
+        <div>
+          <button mat-button matStepperNext (click)="onNext()" style="background-color: #dc3545;color:white;">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" label="Fill out your contact details">
+      <form [formGroup]="secondFormGroup">
+        <div class="container col-md-10">
+          <div class="container-fluid col-md-12" style="display: flex;">
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Contact Number</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Contact Number</mat-label>
+                  <input matInput formControlName="contactNumber" placeholder="Ex. +91-968745896" required>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Address</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Addess</mat-label>
+                  <input matInput formControlName="address" placeholder="Ex. Building,City,State-Pincode." required>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Date of Birth</label>
+              </div>
+              <div class="col-md-6" >
+                <mat-form-field appearance="fill" >
+                  <mat-label>Choose a date</mat-label>
+                  <input formControlName="dateOfBirth" matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+  
+              </div>
+            </div>
+  
+          </div>
+        </div>
+        <div>
+          <button mat-button matStepperPrevious style="background-color: black;color:white;margin-right: 2%;">Back</button>
+          <button mat-button matStepperNext (click)="onNext1() "style="background-color: #dc3545;color:white;">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="thirdFormGroup" label="Fill out your passport details">
+      <form [formGroup]="thirdFormGroup">
+        <ng-template matStepLabel>Fill your Passport Details</ng-template>
+        <div class="container col-md-10">
+          <div class="container-fluid col-md-12" style="display: flex;">
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Passport Number</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Passport Number</mat-label>
+                  <input matInput placeholder="Passport Number" formControlName="passportNumber" required>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Passport Type</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Select</mat-label>
+                  <mat-select formControlName="passportType">
+                    <mat-option value="Blue Passport">Blue Passport</mat-option>
+                    <mat-option value="White Passport">White Passport</mat-option>
+                    <mat-option value="Diplomatic Passport">Diplomatic Passport</mat-option>
+                    <mat-option value="Diplomatic Passport">Orange Passport</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Place of Issue</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Select</mat-label>
+                  <mat-select formControlName="placeOfIssue">
+                    <mat-option value="Blue Passport">Mumbai</mat-option>
+                    <mat-option value="White Passport">Delhi</mat-option>
+                    <mat-option value="Diplomatic Passport">Kolkata</mat-option>
+                    <mat-option value="Diplomatic Passport">Kerela</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>  
+            </div>
+          </div>
+          <div class="container-fluid col-md-12" style="display: flex;">
+            <div class="col-md-4" >
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Issue Date</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill" style="width:140%">
+                  <mat-label>Choose a date</mat-label>
+                  <input formControlName="issueDate" matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker1">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+  
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Expiry Date</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill"  style="width:140%">
+                  <mat-label>Choose a date</mat-label>
+                  <input formControlName="expiryDate" matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker2">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                  <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+  
+              </div>
+            </div>
+            
+          </div>
+        </div>
+  
+        <div>
+          <button mat-button matStepperPrevious style="background-color: black;color:white;margin-right: 2%;">Back</button>
+          <button  mat-button matStepperNext style="background-color: #dc3545;color:white;" (click)="onNext2()">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="fourthFormGroup" label="Fill out your visa details">
+      <form [formGroup]="fourthFormGroup">
+        <ng-template matStepLabel>Fill your Visa Details</ng-template>
+        <div class="container col-md-10">
+          <div class="container-fluid col-md-12" style="display: flex;">
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Visa Number</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Visa Number</mat-label>
+                  <input matInput placeholder="Passport Number" formControlName="visaNumber" required>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Visa Type</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Select</mat-label>
+                  <mat-select formControlName="visaType">
+                    <mat-option value="Blue Passport">Tourist</mat-option>
+                    <mat-option value="White Passport">Transit</mat-option>
+                    <mat-option value="Diplomatic Passport">Business</mat-option>
+                    <mat-option value="Diplomatic Passport">Employment</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Place of Issue</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Select</mat-label>
+                  <mat-select formControlName="visaPlaceOfIssue">
+                    <mat-option value="Blue Passport">Mumbai</mat-option>
+                    <mat-option value="White Passport">Delhi</mat-option>
+                    <mat-option value="Diplomatic Passport">Kolkata</mat-option>
+                    <mat-option value="Diplomatic Passport">Kerela</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>  
+            </div>
+          </div>
+          <div class="container-fluid col-md-12" style="display: flex;">
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Visa Issue Date</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill" style="width:140%">
+                  <mat-label>Choose a date</mat-label>
+                  <input formControlName="visaIssueDate" matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker3">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                  <mat-datepicker #picker3></mat-datepicker>
+                </mat-form-field>
+  
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="col-md-6">
+                <label style="font-weight: bold;margin:2%">Visa Expiry Date</label>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field appearance="fill" style="width:140%">
+                  <mat-label>Choose a date</mat-label>
+                  <input formControlName="visaExpiryDate" matInput [min]="minDate" [max]="maxDate" [matDatepicker]="picker4">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+                  <mat-datepicker #picker4></mat-datepicker>
+                </mat-form-field>
+  
+              </div>
+            </div>
+            
+          </div>
+        </div>
+  
+        <div>
+          <button mat-button matStepperPrevious style="background-color: black;color:white;margin-right: 2%;">Back</button>
+          <button mat-button matStepperNext style="background-color: #dc3545;color:white;" (click)="onNext3()">Next</button>
+        </div>
+      </form>
+    </mat-step>
+    
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      <p>You are now done.</p>
+      <div>
+        <!-- <button mat-button matStepperPrevious style="background-color: black;color:white;margin-right: 2%;">Back</button> -->
+        <button class="btn btn-success me-2" (click)="onSubmit()">Submit Form</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>

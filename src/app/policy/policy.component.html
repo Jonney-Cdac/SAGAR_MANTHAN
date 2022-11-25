@@ -1,0 +1,48 @@
+<header></header>
+<navbar></navbar>
+
+<div class="container mt-5">
+    <button type="button" class="btn btn-primary me-2" (click)="getPolicies()" (click)="toggleShowTable()" >Get Polcies</button>
+    <!-- <button type="button" class="btn btn-success" (click)="loadPolicies()" (click)="toggleShowTable()" >Load Policies</button> -->
+    
+    <form class="form-group" *ngIf='showTable'>
+      <table class='table'>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Policy Name</th>
+              <th>Duration</th>
+              <th>Premium</th>
+              <th>Select Policy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of policies;">
+              <td>{{p.policyid}}</td>
+              <td>{{p.policyname}}</td>
+              <td>{{p.durationinyears}}</td>
+              <td>{{p.priceofpolicy}}</td>
+              <td><input class="form-check-input" type="radio"  [disabled]="isSubmit" name="flexRadioDefault" id="flexRadioDefault1" (click)="onSelectRadioButton(p)"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button type="submit" [disabled]="isSubmit" class="btn btn-success " (click)="submitPolicy()" >Submit Policy</button>
+    </form>
+<!-- 
+    <div class="col-4 mt-5" *ngFor="let p of policies">
+      <div>
+        policyid : {{p.policyid}}
+      </div>
+      <div>
+        policyname : {{p.policyname}}
+      </div>
+      <div>
+        durationinyears : {{p.durationinyears}}
+      </div>
+      <div>
+        priceofpolicy : {{p.priceofpolicy}}
+      </div>
+  </div> -->
+</div>
+

@@ -1,0 +1,26 @@
+.card{
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  height: auto;
+  width: 100%;
+}
+.card-row2{
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  height: auto;
+  width: 80%;
+  padding: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+label{
+  
+  margin-top:15px;
+}
+/* .entire-body-background{
+  background-image: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)),
+                  url("../../assets/images/design-background.png");
+  background-repeat:no-repeat; 
+  background-size: contain;
+  background-position:  bottom 50px left 70%;
+} */
