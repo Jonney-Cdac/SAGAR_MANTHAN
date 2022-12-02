@@ -50,6 +50,7 @@ import { MmdacHomeBodyComponent } from './mmdac-home-body/mmdac-home-body.compon
 import { SidebarComponent } from './home-body/sidebar/sidebar.component';
 import { MapComponent } from './home-body/map/map.component';
 import { NewNavbarComponent } from './new-navbar/new-navbar.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 
 
@@ -106,6 +107,8 @@ import { NewNavbarComponent } from './new-navbar/new-navbar.component';
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSlideToggleModule,
+
    
   ],
   providers: [LoginService,UserService,EmigrantService,

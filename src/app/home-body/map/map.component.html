@@ -1,1 +1,27 @@
-<div id="map" style="height: 800px; width: 960px;"></div>
+
+<div class="col-md-12" style="display: flex;">
+    <div class="col-md-3">  
+        <!-- <input type="button" [(ngModel)]="button_click" value="ShipLayer" (click)="ShipLayer()">      -->
+        <!-- <input type="button" [(ngModel)]="button_click" value="WindSpeed" (click)="WindSpeed()">    
+        <input type="button" [(ngModel)]="button_click" value="HeatMapWind" (click)="HeatMapWind()">    
+        <input type="button" [(ngModel)]="button_click" value="WaveHeight" (click)="WaveHeight()">    
+        <input type="button" [(ngModel)]="button_click" value="HeatMapWave" (click)="HeatMapWave()">    
+        <input type="button" [(ngModel)]="button_click" value="IMD" (click)="IMD()">    
+        <input type="button" [(ngModel)]="button_click" value="HeatMapCurrentSpeed" (click)="HeatMapCurrentSpeed()">    
+        <input type="button" [(ngModel)]="button_click" value="CurrentSpeed" (click)="CurrentSpeed()"> -->
+        <mat-slide-toggle [(ngModel)]="button_click1" (change)="ShipLayer()" style="margin-bottom: 10px;">ShipLayer</mat-slide-toggle> 
+        <mat-slide-toggle [(ngModel)]="button_click2" (change)="WindSpeed()" style="margin-bottom: 10px;">WindSpeed</mat-slide-toggle> 
+        <mat-slide-toggle [(ngModel)]="button_click3" (change)="HeatMapWind()" style="margin-bottom: 10px;">HeatMapWind</mat-slide-toggle> 
+        <mat-slide-toggle [(ngModel)]="button_click4" (change)="WaveHeight()" style="margin-bottom: 10px;">WaveHeight</mat-slide-toggle> 
+        <mat-slide-toggle [(ngModel)]="button_click5" (change)="HeatMapWave()" style="margin-bottom: 10px;">HeatMapWave</mat-slide-toggle> <br/>
+        <mat-slide-toggle [(ngModel)]="button_click6" (change)="IMD()" style="margin-bottom: 10px;">IMD</mat-slide-toggle> 
+        <mat-slide-toggle [(ngModel)]="button_click7" (change)="HeatMapCurrentSpeed()" style="margin-bottom: 10px;">HeatMapCurrentSpeed</mat-slide-toggle> 
+        <mat-slide-toggle [(ngModel)]="button_click8" (change)="CurrentSpeed()" style="margin-bottom: 10px;">CurrentSpeed</mat-slide-toggle> 
+    
+      </div> 
+    
+    <div class="col-md-9" id="map" style="height: 800px; width: 1044px;">
+    
+    </div>
+</div>
+
