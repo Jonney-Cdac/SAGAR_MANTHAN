@@ -26,9 +26,73 @@
         <mat-slide-toggle [(ngModel)]="button_click8" (change)="CurrentSpeed()" style="margin-bottom: 10px;">CurrentSpeed</mat-slide-toggle> 
         <hr style="margin-right: 10px;">
       </div> 
+
+
     
-    <div class="col-md-9" id="map" style="height: 800px; width: 1044px;">
-    
+    <div class="col-md-9" id="map" style="height: 680px; width: 1310px;">
+      <div>
+
+        <main>
+          <div class="left-bar" style="margin-left: -7%;"></div>
+          <div id="ol-map" class="map-container">
+        <div class="btn-group" id="HorzButtonMap">
+        
+              <!--<button type="button" id="zoompercent" title="Percentage Zoom"
+                class="btn btn-sm gisHorzButton" data-toggle="modal"
+                data-target="#modal-default">
+                <i class="fa fa-search"></i>
+                </button> -->
+              <button type="button" id="zoomin" title="Zoom In"
+                class="btn btn-sm gisHorzButton"
+                (click)="this.map.getView().setZoom((this.map.getView().getZoom())+1)"
+                >
+                <i class="fa fa-search-plus"></i>
+              </button>
+              
+              <button type="button" id="zoomout" title="Zoom Out"
+                class="btn btn-sm gisHorzButton"
+                (click)="this.map.getView().setZoom((map.getView().getZoom()) - 1)"	>
+                <i class="fa fa-search-minus"></i>
+              </button>
+              <!--<button type="button" title="Lock Pan" id="enablePanButton"
+                class="btn btn-sm gisHorzButton " (click)="enablePan()">
+                <i class="fa fa-hand-rock-o" ></i>
+              </button> -->
+              <button type="button" title="Zoom To Extent" id="extentButton" 
+                class="btn btn-sm gisHorzButton" (click)="this.zoomToExtent()">
+                <i class="fa fa-search" ></i></button>
+              <!--
+              <button type="button" title="Refresh" id="refresh"
+                class="btn btn-sm gisHorzButton" (click)="removeAllLayersRefresh()">
+                <i class="fa fa-refresh" ></i>
+              </button> -->
+              <button type="button" title="Rectangle Zoom" id="rectZoom"
+                class="btn btn-sm gisHorzButton" (click)="this.toggleRectZoom()">
+                <i class="fa fa-square-o" ></i>
+              </button>
+              <!--<button type="button" title="Key Map" id="keymap"
+                class="btn btn-sm gisHorzButton" (click)="keyMap()">
+                <i class="fa fa-key" ></i>
+              </button>-->
+              <button type="button" title="Grid" id="horzGrid"
+                class="btn btn-sm gisHorzButton" (click)="horzGridOnMap()">
+                <i class="fa fa-th" ></i>
+              </button> 
+              <div class="pull-right" Style="padding-left:180px;" id="ringDistanceInfo">					
+              </div>
+              <div class="pull-right" Style="padding-left:180px;" id="onlyDistanceInfo">					
+              </div>
+              <div class="pull-right" Style="padding-left:180px;" id="replayControlPanel">					
+              </div>
+            </div>	</div>				
+        </main>
+      </div>
     </div>
 </div>
+
+
+
+
+
+
 

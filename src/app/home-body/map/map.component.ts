@@ -18,7 +18,7 @@ import Modify from 'ol/interaction/Modify';
 import Collection from 'ol/Collection';
 import Translate from 'ol/interaction/Translate';
 import Select from 'ol/interaction/Select';
-import { pointerMove } from 'ol/events/condition';
+import { always, pointerMove } from 'ol/events/condition';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import TileLayer from 'ol/layer/Tile';
@@ -43,6 +43,13 @@ import {
 } from 'ol/proj';
 import { stringToGlsl } from 'ol/style/expressions';
 import { Geometry } from 'ol/geom';
+import { Graticule } from 'ol';
+import LineString from 'ol/geom/LineString';
+import {toStringHDMS} from 'ol/coordinate';
+import DragPan from 'ol/interaction/DragPan';
+import DragZoom from 'ol/interaction/DragZoom';
+import ImageWMS from 'ol/source/ImageWMS';
+import {Image as ImageLayer} from 'ol/layer';
 
 
 
@@ -52,6 +59,133 @@ import { Geometry } from 'ol/geom';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements AfterViewInit {
+  
+public map:any;
+
+
+
+
+
+
+// ----------- -Rectangular Zoom --------------------------------------------
+
+dragZoom = new DragZoom({
+  condition: always
+});
+
+ toggleState = 0;
+toggleRectZoom() {
+  try{
+    //$('#rectZoom').toggleClass("down");
+      if( this.toggleState == 0) {
+          this.map.addInteraction(this.dragZoom);
+          this.toggleState = 1;
+      }
+      else {
+          this.map.removeInteraction(this.dragZoom);
+          this.toggleState = 0;
+      }			
+  }
+  catch(err)
+  {
+    console.info('error in rectangle zoom: ' + err)
+  }
+}
+
+// ------------ End of Rectangular Zoom
+
+// ----------- for ZoomExtent --------------------------------------------
+
+ zoomToExtent(){	
+  try{
+    var extent = this.shipSource.getExtent();
+    this.map.getView().fit(extent, this.map.getSize());
+  }
+  catch(err)
+  {
+    console.info('error in zoom to extent: ' + err)
+  }
+}
+
+// -----------end of ZoomExtent --------------------------------------------
+
+// Styling of Grid when visible on map
+
+public graticuleOn:any;
+public graticuleOnStyle:any;
+public graticuleOffStyle:any;
+
+
+graticule(){	
+this.graticuleOn = false;
+
+this.graticuleOnStyle =  new Graticule({	      
+    strokeStyle: new Stroke({
+      color: 'rgba(255,120,0,0.9)',
+      width: 2,
+      lineDash: [0.5, 4]
+    }),
+    showLabels: true,	     
+    latLabelPosition: 0.05,	      
+    wrapX: false
+  });
+
+// Styling of Grid when not visible on map
+this.graticuleOffStyle =  new Graticule({	    
+    strokeStyle: new Stroke({
+      color: 'rgba(255,120,0,0.0)',
+      width: 0,
+      lineDash: [0.1, 2]
+    }),
+    showLabels: true,	      
+    latLabelPosition: 0.05,	     
+    wrapX: false
+  })
+
+// for grid Line lables on load
+this.graticuleOnStyle.setMap(null);
+this.graticuleOffStyle.setMap(this.map);
+}
+horzGridOnMap(){
+//try{
+  //$('#horzGrid').toggleClass("down");
+  if(this.graticuleOn==false)
+  {     
+    this.graticuleOffStyle.setMap(null);
+    this.graticuleOnStyle.setMap(this.map);
+    this.graticuleOn = true;
+  }
+  else
+  {	
+    this.graticuleOnStyle.setMap(null);
+    this.graticuleOffStyle.setMap(this.map);				
+    this.graticuleOn = false;
+  }			
+//}
+//catch(err)
+//{
+//  console.info('error in horizontal toolbar Grid On Map: ' + err)
+//}
+}
+// ----------- To Enable Pan --------------------------------------  	
+enablePan(){
+  /*try{
+    //$('#enablePanButton').toggleClass("down");
+  this.map.getInteractions().forEach(function(interaction:any) {
+    if (interaction instanceof DragPan) {
+      interaction.setActive(!interaction.getActive());
+    }
+  }, this);
+  }
+catch(err)
+{
+  console.info('error in enable pan: ' + err)
+}*/
+}
+// ----------- End of Enable Pan --------------------------------------
+
+
+  
 
   public VectorWindSpeed:any;
   public VectorshipLayer:any;
@@ -70,6 +204,7 @@ export class MapComponent implements AfterViewInit {
   button_click7:any = false;
   button_click8:any = false;
  
+
 
 
 
@@ -190,7 +325,7 @@ this.VectorshipLayer = new VectorLayer({
 
 
 //---------
-var map = new Map({
+this.map = new Map({
       view: new View({
         center: [0, 0],
         zoom: 1,
@@ -198,61 +333,67 @@ var map = new Map({
       layers: [
         new TileLayer({
           source: new OSM(),
-        })
+        }),
+        new ImageLayer({
+					source: new ImageWMS({
+						params: { LAYERS: 'GIS-ENC-OFFSHORE', CSBOOL: '181', CSVALUE: ',,,,,2' },
+						//url: 'https://wms.sevencs.com/?'
+					})
+				}),    
       ],
       target: "map"
     });
 
 
-
+this.graticule();
      // map.addControl(new FullScreen());
 
-      map.on('singleclick', (event) => {
-        var lonLat = toLonLat(event.coordinate);
+      // map.on('singleclick', (event) => {
+      //   var lonLat = toLonLat(event.coordinate);
 
-        //if (this.iconFeature) vl.getSource().removeFeature(this.iconFeature);
+      //   //if (this.iconFeature) vl.getSource().removeFeature(this.iconFeature);
 
-        this.iconFeature = this.addMarker(lonLat[0], lonLat[1]);
+      //   this.iconFeature = this.addMarker(lonLat[0], lonLat[1]);
 
-        var dragInteraction = new Modify({
-          features: new Collection([this.iconFeature]),
-         // style: null,
-        });
+      //   var dragInteraction = new Modify({
+      //     features: new Collection([this.iconFeature]),
+      //    // style: null,
+      //   });
 
-        this.iconFeature.on('mouseover', function () {
-          console.log('d');
-        });
+      //   this.iconFeature.on('mouseover', function () {
+      //     console.log('d');
+      //   });
 
-        this.iconFeature.on('change', function () {
-          // console.log(
-          //   'Feature Moved To:' + this.getGeometry().getCoordinates()
-          // );
-        });
+      //   this.iconFeature.on('change', function () {
+      //     // console.log(
+      //     //   'Feature Moved To:' + this.getGeometry().getCoordinates()
+      //     // );
+      //   });
 
-        const translate = new Translate({
-          features: new Collection([this.iconFeature]),
-        });
+      //   const translate = new Translate({
+      //     features: new Collection([this.iconFeature]),
+      //   });
 
-        translate.on('translateend', (e) => {
-          let lonLat = toLonLat(e.coordinate);
-        });
+      //   translate.on('translateend', (e) => {
+      //     let lonLat = toLonLat(e.coordinate);
+      //   });
 
-        map.addInteraction(translate);
+      //   map.addInteraction(translate);
 
-        const selected_feature = new Select({
-          condition: pointerMove,
-          style: new Style({
-            image: new Icon(
-              /** @type {olx.style.IconOptions} */ ({
-                scale: 2,
-              })
-            ),
-          }),
-        });
-        map.addInteraction(selected_feature);
+      //   const selected_feature = new Select({
+      //     condition: pointerMove,
+      //     style: new Style({
+      //       image: new Icon(
+      //         /** @type {olx.style.IconOptions} */ ({
+      //           scale: 2,
+      //         })
+      //       ),
+      //     }),
+      //   });
+      //   map.addInteraction(selected_feature);
 
-        //map.addInteraction(dragInteraction);
-      });
+      //   //map.addInteraction(dragInteraction);
+      // });
  //   });
  //ShipPosition	
  var shipdata;
@@ -264,9 +405,16 @@ var map = new Map({
 			var iconFeature = new Feature({
         geometry: new Point(transform([shipdata[i].longitude, shipdata[i].latitude], "EPSG:4326", "EPSG:3857")),
         name:'test',
-		vesselstatus:shipdata[i].vesselstatus,
-		Text:'Ship'
-		
+        Text:'Ship',
+    vesselstatus:shipdata[i].vesselstatus,
+    mmsi_no:shipdata[i].mmsi_no,
+    timestamp1:shipdata[i].timestamp1,
+		imo_no:shipdata[i].imo_no,
+    ship_name:shipdata[i].ship_name,
+    speed:shipdata[i].speed,
+    course:shipdata[i].course,
+    data_user_provider:shipdata[i].data_user_provider,
+
     });
     this.shipSource.addFeature(iconFeature);
 	  //  this.markerSource.addFeature(iconFeature);
@@ -927,19 +1075,17 @@ fetch('/assets/forecast.json').then(res => res.json())
 
     //All Layers 
 
-      map.addLayer(this.VectorshipLayer);
-      map.addLayer(this.VectorWindSpeed);
-      map.addLayer(this.VectorHeatMapWind);
-      map.addLayer(this.VectorWaveHeight);
-      map.addLayer(this.VectorHeatMapWave);
-      map.addLayer(this.VectorLayerIMD);
-      map.addLayer(this.VectorLayerCurrentSpeed);
-      map.addLayer(this.VectorHeatMapCurrentSpeed);
+      this.map.addLayer(this.VectorshipLayer);
+      this.map.addLayer(this.VectorWindSpeed);
+      this.map.addLayer(this.VectorHeatMapWind);
+      this.map.addLayer(this.VectorWaveHeight);
+      this.map.addLayer(this.VectorHeatMapWave);
+      this.map.addLayer(this.VectorLayerIMD);
+      this.map.addLayer(this.VectorLayerCurrentSpeed);
+      this.map.addLayer(this.VectorHeatMapCurrentSpeed);
 
 
-
-
-
+      this.map.on('click', this.clickevtMap1 ); 
 
       
 
@@ -1033,6 +1179,428 @@ ShipLayer(){
      
     } 
  
+
+
+
+
+
+
+
+
+
+
+
+// ----------End of Left click on map event -------------------------------
+
+
+clickevtMap1(evt:any) {
+
+	function removeLayersFromMap(layerName:any,featureProperty:any,featurePropertyValue:any)	
+	{
+		try{
+			var layersToRemove:any = [];
+			  map.getLayers().forEach(function (layer:any) {
+				  if (layer.get('name') != undefined && (layer.get('name')).match(layerName)) {		    	 
+					  layer.getSource().clear();
+					//@ts-ignore
+					  layersToRemove.push(layer);		         
+				  }
+			  });
+	
+			  var len = layersToRemove.length;
+			  for(var i = 0; i < len; i++) {
+								  //@ts-ignore
+	
+				  var features = layersToRemove[i].getSource().getFeatures();
+					  features.forEach(function(feature:any) {
+				  
+						if (feature.get(featureProperty) == featurePropertyValue)	      
+						{	
+											//@ts-ignore
+							
+							layersToRemove[i].getSource().removeFeature(feature);
+						};				    	
+					});
+				
+				  map.removeLayer(layersToRemove[i]);
+			  }
+		}
+		catch(err)
+		{
+			console.info('error in removeLayersFromMap: ' + err)
+		}
+	}
+	
+var popupLineStyle = new Style({
+	  stroke: new Stroke({
+     color: 'darkred',
+     width: 1.5
+    })
+ });
+
+	var imoNoforPopup:any;
+	// var previousDrawDistance = this.previousDrawDistance;
+	// var currentDrawDistance = this.currentDrawDistance;
+	// var cnt= this.cnt; 
+	 //var dragPan = this.dragPan;
+	 
+	 //--------------------
+	 //var ringRangeFlag=false;
+	 //var pathProjectionStartFlag = false;
+	//var distanceFlag=false;
+	 //var surpicInteractionOnFlag=4;
+	//var customPolygonInteractionFlag=false;
+	 
+	 //----------------------
+	//var distanceFlag=false;
+	//var countDrawDistance =0;
+	//var messageIdForPopup;
+	var map=evt.map;
+	//	  try
+	//	 {	 
+		 
+			 // $("#rightClickDiv").hide();
+			  console.log(evt.coordinate);    	 
+			  var geometryFeature = evt.map.forEachFeatureAtPixel(
+					  evt.pixel, function(feature:any) { return feature;
+				 });
+			
+			if(geometryFeature)
+			{
+				if (geometryFeature.getGeometry().getType() === 'Point')
+				{	
+					{			
+										
+					var clickedShipInfo = geometryFeature;
+					var coordinate = evt.coordinate;
+						
+						//var hdms = coordinate.toStringHDMS(toLonLat(coordinate,'EPSG:4326'));
+						
+					imoNoforPopup = geometryFeature.get('message_id');	
+					var id =geometryFeature.get('imo_no');
+          var overlayId =id+'_popup';
+
+												{						
+							//clickedShipInfo.popupStatus=true;
+					coordinate = geometryFeature.getGeometry().getCoordinates();
+					var pointCordinates = toStringHDMS(toLonLat(geometryFeature.getGeometry().getCoordinates(),'EPSG:4326'));
+					coordinate = geometryFeature.getGeometry().getCoordinates();
+					var noSpaceStr = pointCordinates.replace(/\s/g, '');
+					var index = noSpaceStr.indexOf("N");
+							
+							if(index==-1)
+								index = noSpaceStr.indexOf("S");
+							
+							
+							var orgTimeStamp = clickedShipInfo.get("timestamp1");
+							console.log(orgTimeStamp);
+							//if(currentShipState == 'Replay') //if(playFlag==true)
+							//	orgTimeStamp = clickedShipInfo.fromTimestamp1;//toTimestamp1;
+							
+							var indexTime = (orgTimeStamp).indexOf("T");
+							var indexPlus = (orgTimeStamp).indexOf("+");
+							var date:any = new Date(Date.parse(orgTimeStamp));
+							
+							var dd:any = date.getDate();
+							var mm:any = date.getMonth()+1; 
+							var yyyy = date.getFullYear();
+							
+							var hr = date.getHours();
+							var min = date.getMinutes();
+							var sec = date.getSeconds();
+						
+							if(dd<10) 
+							{
+								dd='0'+dd;
+							} 
+				
+							if(mm<10) 
+							{
+								mm='0'+mm;
+							} 
+							
+							date =dd+'/'+  mm+'/'+ yyyy;
+							var time = hr +":"+ min +":" + sec;						
+							var featureToCompare;
+							var flagCountryToCompare;
+							var countryListIdsShips:any=[];
+							
+													
+							var datauserCountry = null;
+							
+							
+							
+							
+							if(featureToCompare == flagCountryToCompare)
+							{
+								var speedInfo = clickedShipInfo.speed;
+								var courseInfo = clickedShipInfo.course;
+								if(speedInfo!=null)
+									speedInfo = speedInfo + " knots";
+								if(courseInfo!=null)
+									courseInfo = courseInfo + " deg";
+								
+								
+								//--
+								// for flag ship popup
+								var output =  "<div onmousedown=\"return false\" class= \"popupFont\" id=\""+id+"-lat\">"+ (noSpaceStr.substring(0,index+1)).trim()+" </div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\" id=\""+id+"-lon\">"+ (noSpaceStr.substring(index+1,noSpaceStr.length)).trim()+"</div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\" id=\""+id+"-date\">"+ ((orgTimeStamp).substring(0,indexTime)).trim() +"</div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\" id=\""+id+"-time\">"+ ((orgTimeStamp).substring(indexTime+1,indexPlus)).trim() +"</div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("imo_no")) +" </div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("mmsi_no")) +" </div>" +						
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("ship_name")) +" </div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("speed")) +"</div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("course")) +"</div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("data_user_provider")) +" </div>"; // +
+							}
+							else
+								{
+								// for foreign ship popup
+								//console.info("Foreign");
+								output = "<div onmousedown=\"return false\" class= \"popupFont\" id=\""+id+"-lat\">"+ (noSpaceStr.substring(0,index+1)).trim()+" </div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\"id=\""+id+"-lon\">"+ (noSpaceStr.substring(index+1,noSpaceStr.length)).trim()+"</div>" +		
+								"<div onmousedown=\"return false\" class= \"popupFont\" id=\""+id+"-date\">"+ ((orgTimeStamp).substring(0,indexTime)).trim() +"</div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\" id=\""+id+"-time\">"+ ((orgTimeStamp).substring(indexTime+1,indexPlus)).trim() +"</div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("imo_no")) +" </div>" +
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("mmsi_no")) +" </div>" +						
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("ship_name")) +" </div>" +							
+								"<div onmousedown=\"return false\" class= \"popupFont\">"+ (clickedShipInfo.get("data_user_provider")) +" </div>";
+								}
+						var popupdiv=document.createElement("div");					
+						map.removeOverlay(map.getOverlayById(overlayId)); //if existing
+						  //-------------- 
+						 
+						popupdiv.setAttribute("id", id);
+						popupdiv.setAttribute("class", "ol-popup");
+									   
+						document.body.appendChild(popupdiv);
+						
+						var companyVesselDetailsDiv = "";
+						if(featureToCompare == flagCountryToCompare)
+						{
+							companyVesselDetailsDiv = "<div  onmousedown=\"return false\" class= \"popupFont\" style=\"text-decoration: underline blue; \"><a Style=\"color: gray\" href=# id="+id+"-company \">Company Details</a></div>" +
+							"<div  onmousedown=\"return false\" class= \"popupFont\" style=\"text-decoration: underline blue;\"><a Style=\"color: gray\" href=# id="+id+"-vessel \">Vessel Details</a> </div>";
+						}
+						 popupdiv.innerHTML =  "<div onmousedown=\"return false\" id="+id+"-title class=ol-popup-title></div> <a href=# id="+id+"-closer class=ol-popup-closer></a><a href=# id="+id+"-resize class=ol-popup-resize></a>"+
+						 "<div onmousedown=\"return false\" class= \"popupFont\" Style=\"padding-top:5px; color: #337ab7\">----------------------</div><div onmousedown=\"return false\" id="+id+"-content class=\"popup-content scrollbar-popup\">"+ output +  
+						 companyVesselDetailsDiv + "</div>" ; 
+						
+						 if(companyVesselDetailsDiv != "")				   
+						 {
+							var vesselClick:any  = document.getElementById(id+"-vessel");
+							vesselClick.onclick = function() {				    	
+								//window.open("/lrit/ship/viewvesselonmap/"+id.split('_')[0], '_blank');
+								window.open("/lrit/ship/viewvesselonmap/"+clickedShipInfo.imo_no, '_blank');
+								 //openWindowWithPost("/lrit/ship/viewvesselonmap/"+clickedShipInfo.imo_no, "");
+	
+							};
+							
+							var companyClick:any  = document.getElementById(id+"-company");
+								 companyClick.onclick = function() {					    
+								//window.open("/lrit/users/companycsodetails/?imoNo="+clickedShipInfo.imo_no.trim(), '_blank');
+								 //openWindowWithPost("/lrit/users/companycsodetails", "imoNo="+clickedShipInfo.imo_no );
+							};
+						 }
+							
+						 // update popup close status
+						 var content = document.getElementById(id+"-content");
+						 var closer:any = document.getElementById(id+"-closer");
+						 closer.onclick = function() {
+							overlay.setPosition(undefined);
+							map.removeOverlay(overlay);	
+							//@ts-ignore	
+							removeLayersFromMap('popupLineLayer'+id,'name','Line'+id);
+							
+							 var findShipKeyInd = id.indexOf("_popup");
+							 var findShipKey = (id.substring(0,findShipKeyInd)).trim();
+							//// var clickedShipInfoClose = AllShipStatusInfo.get(findShipKey);	
+								var currentShipStateClose =  'latest';
+								   
+							  
+						 						
+						};
+						
+						// popup resize
+						var resize:any = document.getElementById(id+"-resize");
+						resize.onclick = function() {				    	
+							 if(clickedShipInfo.popupResizeStatus==false)
+							 { 			
+								 document.getElementById(id+"-resize")!.className = "ol-popup-resizeMin";				    		
+								 clickedShipInfo.popupResizeHeight = document.getElementById(id+"-content")!.offsetHeight;
+								 clickedShipInfo.popupResizeWidth = document.getElementById(id+"-content")!.offsetWidth;
+								 document.getElementById(id)!.style.height = '100px';
+								 document.getElementById(id)!.style.width = '125px';
+								 document.getElementById(id+"-content")!.style.height = '55px'; 
+								 document.getElementById(id+"-content")!.style.width = '110px'; 
+								 clickedShipInfo.popupResizeStatus=true;					    	 
+							 }
+							 else
+							 {
+								 document.getElementById(id+"-resize")!.className = "ol-popup-resize";
+								 document.getElementById(id)!.style.height = clickedShipInfo.popupResizeHeight + 45 + 'px';
+								 var popupWidthResize = (clickedShipInfo.popupResizeWidth + 30);
+								 if (popupWidthResize<130)
+									 popupWidthResize = 130;
+								 document.getElementById(id)!.style.width = popupWidthResize +'px';
+								 document.getElementById(id+"-content")!.style.height = clickedShipInfo.popupResizeHeight + 'px';
+								 document.getElementById(id+"-content")!.style.width = clickedShipInfo.popupResizeWidth+ 'px';
+								 clickedShipInfo.popupResizeStatus=false;
+							 }
+													 
+						 }
+							
+						// create popup overlay
+					   var overlay = new Overlay({
+						   id : overlayId,
+						   element: popupdiv,				       
+						   autoPan: true,
+						  /*// autoPanAnimation: {
+							   duration: 250
+						   }	*/			      
+					   });     			       
+					 
+					  evt.map.addOverlay(overlay); 			    
+					  overlay.setPosition(coordinate);	
+					 // $("#"+overlayId).show(); //for hidden popups
+					  // create popup line 
+					  var countDrag = 0;
+					  var vectorLayer_Line:any;
+					  var start_point = [coordinate];
+						 var end_point = [overlay.getPosition()];
+					   
+						  var lineCoordinates = [start_point, end_point]; 
+					   							//@ts-ignore	
+
+						  removeLayersFromMap('popupLineLayer'+overlayId,'name','Line'+overlayId);
+						  vectorLayer_Line = new VectorLayer({
+								 source: new VectorSource({
+									 features: [new Feature({
+										 geometry: new LineString(lineCoordinates),
+										 name: 'Line'+overlayId
+									 })],
+									 wrapX: false,
+									//// noWrap: true
+								 }),
+								// name: "popupLineLayer" +overlayId
+							 });
+					   evt.map.addLayer(vectorLayer_Line);  		    		 
+					
+					  
+					   var draggingPopup:any;
+				   // popup movement functionality 
+					popupdiv.addEventListener('mousedown', function(evt) {   	
+					   evt.preventDefault();
+					   draggingPopup =   overlayId; 
+					   var mousedowncoord = map.getEventCoordinate(evt);
+					   var currentpopupcoord = map.getOverlayById(draggingPopup).getPosition();
+					 function move(evt:any) {   				  
+					   var popupdragoffest =  [mousedowncoord[0]-map.getEventCoordinate(evt)[0],mousedowncoord[1]-map.getEventCoordinate(evt)[1]];
+					   var newposition = [currentpopupcoord[0]-popupdragoffest[0],currentpopupcoord[1]-popupdragoffest[1] ];
+					   map.getOverlayById(draggingPopup).setPosition(newposition);
+					   
+					 }
+					 function end(evt:any) {   				
+					   window.removeEventListener('mousemove', move);
+					   window.removeEventListener('mouseup', end);
+					   var findShipKeyInd = draggingPopup.indexOf("_popup");
+					   var findShipKey = (id.substring(0,findShipKeyInd)).trim();
+					   ///var clickedShipInfoTemp = AllShipStatusInfo.get(findShipKey);
+					var clickedShipInfoTemp =" ";	
+					 							//@ts-ignore	
+
+					   removeLayersFromMap('popupLineLayer'+draggingPopup,'name','Line'+draggingPopup); //Always remove before draw
+				  
+					if(clickedShipInfoTemp != undefined){
+					   
+						var pointCordinates = [coordinate[0], coordinate[1]];
+											
+						countDrag = countDrag+5;				;
+						start_point = pointCordinates;
+							end_point =  map.getOverlayById(draggingPopup).getPosition();					    				
+						var lineCoordinates = [start_point, end_point]; 
+						   
+						/////   removeLayersFromMap('popupLineLayer'+draggingPopup,'name','Line'+draggingPopup);
+						   
+						   var features = new Feature({
+									 name: 'Line'+draggingPopup,
+								  geometry: new LineString(lineCoordinates)					  
+							  });
+				
+						   features.setStyle(popupLineStyle);
+						   vectorLayer_Line = new VectorLayer({
+								//name: "popupLineLayer" ;//+draggingPopup,
+
+								  source: new VectorSource({wrapX: false,
+										 }),
+							  });
+							vectorLayer_Line.getSource().addFeature(features);
+							vectorLayer_Line.set("name","popupLineLayer" +draggingPopup)	       
+							   map.addLayer(vectorLayer_Line);
+					}
+					 }
+					 
+					 window.addEventListener('mousemove', move);
+					 window.addEventListener('mouseup', end);
+					
+				   });   			
+									
+				}
+				} // end of else on click display ship details
+			   } // end of if (geometryFeature.getGeometry().getType() === 'Point')
+				/*else if (geometryFeature.getGeometry().getType() === 'LineString')
+				{
+					// To delete drawn distance line from map. 				
+					var currentSelectedLine = geometryFeature.get('name');
+						
+					var overlay = map.getOverlays();
+					var overlayToRemoveArr = [];					
+					for (var m=0; m<overlay.getLength(); m++)
+					{						
+						var currentOverlayId = overlay.item(m).getId();
+						
+						if(currentOverlayId!= undefined )
+						{							
+							if( currentOverlayId.match(currentSelectedLine))
+							{
+								overlayToRemoveArr.push(currentOverlayId);							
+							}
+						}
+					}
+					
+					for (var n=0; n<overlayToRemoveArr.length; n++)
+					{
+						var overlayToRemove = map.getOverlayById(overlayToRemoveArr[n]);
+						map.removeOverlay(overlayToRemove);
+					}					
+				
+					var features = vectorLayer_SelectedShipPosition.getSource().getFeatures();
+					features.forEach(function(feature) {
+						  
+						if (feature.get('name').match(currentSelectedLine))	      
+							{
+							vectorLayer_SelectedShipPosition.getSource().removeFeature(feature);
+						};
+					});
+				}*/
+				
+			} // end of if(geometryFeature)
+			else{
+				/*//if(pathProjectionStartFlag == true)
+				{	
+					addInteractionCircle(evt.coordinate);		
+					
+				}//*/
+			}			
+	//  }
+	// catch(err)
+	//	{
+	//		console.info('error in Left Click on map event: ' + err)
+	//	} 
+	};
+
+// delete selected layers from map	
+
 
 
 
