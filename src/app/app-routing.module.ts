@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
 //import { EmigrantDashboardComponent } from './emigrant-dashboard/emigrant-dashboard.component';
 //import { EmigrantListComponent } from './emigrant-list/emigrant-list.component';
 //import { EmigrantLoginComponent } from './emigrant-login/emigrant-login.component';
 //import { EmigrantComponent } from './emigrant/emigrant.component';
-import { HomeComponent } from './home/home.component';
 //import { PolicyComponent } from './policy/policy.component';
 //import { RecrutingAgentLoginComponent } from './recruting-agent-login/recruting-agent-login.component';
 //import { RegistrationStatusComponent } from './registration-status/registration-status.component';
